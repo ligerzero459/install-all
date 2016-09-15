@@ -1,0 +1,22 @@
+{
+  "name": "install-all",
+  "version": "1.0.0",
+  "description": "Recursively npm install in all immediate folders containing package.json",
+  "main": "index.js",
+  "bin": {
+    "install-all": "index.js"
+  },
+  "author": "Ryan Mottley <ligerzero459@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ligerzero459/install-all"
+  },
+  "homepage": "https://github.com/ligerzero459/install-all",
+  "bugs": {
+    "url": "https://github.com/ligerzero459/install-all/issues"
+  }
+}
