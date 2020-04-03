@@ -13,7 +13,7 @@ harder"
 $ npm install -g install-all
 ```
 
-###Usage
+### Usage
 
 ```bash
 $ install-all
