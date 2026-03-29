@@ -1,4 +1,4 @@
-#!/usr/local/bin/node
+#!/usr/bin/env node
 
 'use strict'
 
@@ -10,7 +10,6 @@ const fs = require('fs')
 const path = require('path')
 const async = require('async')
 
-const Spinner = CLI.Spinner
 const Progress = CLI.Progress
 
 const progress_bar = new Progress(50)
