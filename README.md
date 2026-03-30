@@ -55,3 +55,21 @@ Navigate to the top level folder and run the following:
 ```bash
 $ install-all
 ```
+
+### Options
+
+| Flag | Short | Description |
+|------|-------|-------------|
+| `--version` | `-v` | Print the version number and exit |
+| `--help` | `-h` | Show help message and exit |
+| `--clean` | `-c` | Run clean install (`npm ci`, `yarn/pnpm/bun install --frozen-lockfile`) |
+
+#### Clean Install
+
+Use the `--clean` flag to perform a clean install in each project directory. This removes
+existing `node_modules` and installs from the lock file exactly, which is useful for CI
+environments or when you want a fresh, reproducible install:
+
+```bash
+$ install-all --clean
+```

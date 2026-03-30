@@ -19,13 +19,22 @@ function determinePackageManager(dir) {
   }
 }
 
-async function runInstall(dir, pm) {
+const CLEAN_INSTALL_ARGS = {
+  npm:  ['ci'],
+  yarn: ['install', '--frozen-lockfile'],
+  pnpm: ['install', '--frozen-lockfile'],
+  bun:  ['install', '--frozen-lockfile'],
+}
+
+async function runInstall(dir, pm, options = {}) {
   if (!SUPPORTED_PACKAGE_MANAGERS.has(pm)) {
     return { success: false, error: `Unsupported package manager: ${pm}` }
   }
 
+  const args = options.clean ? CLEAN_INSTALL_ARGS[pm] : ['install']
+
   try {
-    await execFile(pm, ['install'], { cwd: dir })
+    await execFile(pm, args, { cwd: dir })
     return { success: true }
   } catch (err) {
     return { success: false, error: err.stderr || err.message }
