@@ -12,7 +12,9 @@
     "recursive"
   ],
   "main": "index.js",
-  "bin": "index.js",
+  "bin": {
+    "install-all": "index.js"
+  },
   "author": "Ligerzero <ligerzero459@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -29,11 +31,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ligerzero459/install-all"
+    "url": "git+https://github.com/ligerzero459/install-all.git"
   },
   "homepage": "https://github.com/ligerzero459/install-all",
   "bugs": {
     "url": "https://github.com/ligerzero459/install-all/issues"
   },
-  "engines": { "node": ">=20"}
+  "engines": {
+    "node": ">=20"
+  }
 }
