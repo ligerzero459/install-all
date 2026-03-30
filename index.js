@@ -67,7 +67,7 @@ async function start(options = {}) {
 
     // Shorten the displayed path if it's too long to avoid breaking the progress bar layout
     const displayDir = dir.length > 53 ? dir.slice(0, 50) + '...' : dir
-    progressLine(`Installing packages in ${displayDir} with ${pm}...`, progressBar, count.installed, count.total)
+    progressLine(`Installing packages in ${displayDir} with ${pm}...`, progressBar, count.current, count.total)
 
     // Install packages and update counts based on success/failure
     // Technically this is race-y since multiple installs are happening concurrently, but the progress bar is
