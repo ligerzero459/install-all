@@ -94,4 +94,39 @@ describe('runInstall', () => {
     const result = await runInstall('/tmp/some-dir', 'yarn')
     expect(result).toEqual({ success: false, error: 'spawn ENOENT' })
   })
+
+  it('uses clean install args when options.clean is true', async () => {
+    const expected = {
+      npm:  ['ci'],
+      yarn: ['install', '--frozen-lockfile'],
+      pnpm: ['install', '--frozen-lockfile'],
+      bun:  ['install', '--frozen-lockfile'],
+    }
+
+    for (const pm of ['npm', 'yarn', 'pnpm', 'bun']) {
+      const result = await runInstall('/tmp/dir', pm, { clean: true })
+      expect(result).toEqual({ success: true })
+      expect(mockExecFile).toHaveBeenCalledWith(
+        pm, expected[pm], { cwd: '/tmp/dir' }, expect.any(Function)
+      )
+    }
+  })
+
+  it('uses regular install args when options.clean is false', async () => {
+    for (const pm of ['npm', 'yarn', 'pnpm', 'bun']) {
+      const result = await runInstall('/tmp/dir', pm, { clean: false })
+      expect(result).toEqual({ success: true })
+      expect(mockExecFile).toHaveBeenCalledWith(
+        pm, ['install'], { cwd: '/tmp/dir' }, expect.any(Function)
+      )
+    }
+  })
+
+  it('defaults to regular install when no options provided', async () => {
+    const result = await runInstall('/tmp/dir', 'npm')
+    expect(result).toEqual({ success: true })
+    expect(mockExecFile).toHaveBeenCalledWith(
+      'npm', ['install'], { cwd: '/tmp/dir' }, expect.any(Function)
+    )
+  })
 })

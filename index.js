@@ -21,6 +21,7 @@ const async = require('async')
 const ConsoleUtils = require('./src/console')
 const { findPackageDirs } = require('./src/directory')
 const { runInstall, determinePackageManager } = require('./src/install')
+const { parseCliArgs, printVersion, printHelp } = require('./src/cli')
 
 const LineBuffer = CLI.LineBuffer
 const Progress = CLI.Progress
@@ -42,7 +43,7 @@ const count = {
 , errors: []
 }
 
-async function start() {
+async function start(options = {}) {
   try {
     console.log(
       chalk.blue(
@@ -71,7 +72,7 @@ async function start() {
     // Install packages and update counts based on success/failure
     // Technically this is race-y since multiple installs are happening concurrently, but the progress bar is
     // just an estimate anyway and this keeps the code simpler than trying to coordinate counts across async workers
-    const result = await runInstall(dir, pm)
+    const result = await runInstall(dir, pm, options)
     if (result.success) {
       count.installed++
     } else {
@@ -100,7 +101,26 @@ async function start() {
   }
 }
 
-start().catch(err => {
-  console.error(chalk.red('Error during installation:'), err)
+let options
+try {
+  options = parseCliArgs()
+} catch (err) {
+  console.error(chalk.red(err.message))
+  printHelp()
   process.exit(1)
-})
+}
+
+if (options.version) {
+  printVersion()
+  process.exit(0)
+} else if (options.help) {
+  printHelp()
+  process.exit(0)
+} else {
+  start(options).catch(err => {
+    console.error(chalk.red('Error during installation:'), err)
+    process.exit(1)
+  })
+}
+
+module.exports = { start }

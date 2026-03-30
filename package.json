@@ -1,6 +1,6 @@
 {
   "name": "install-all",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Recursively install packages in all subdirectories with package.json files, using the appropriate package manager.",
   "keywords": [
     "install",

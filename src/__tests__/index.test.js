@@ -62,6 +62,12 @@ beforeEach(() => {
     runInstall: (...args) => mockRunInstall(...args),
   }))
 
+  jest.mock('../cli', () => ({
+    parseCliArgs: jest.fn().mockReturnValue({}),
+    printVersion: jest.fn(),
+    printHelp: jest.fn(),
+  }))
+
   jest.spyOn(process, 'exit').mockImplementation((code) => {
     mockExitCode = code
   })
@@ -104,9 +110,9 @@ describe('index.js (start)', () => {
 
     await loadAndRun()
 
-    expect(mockRunInstall).toHaveBeenCalledWith('/tmp/yarn-proj', 'yarn')
-    expect(mockRunInstall).toHaveBeenCalledWith('/tmp/pnpm-proj', 'pnpm')
-    expect(mockRunInstall).toHaveBeenCalledWith(longDir, 'npm')
+    expect(mockRunInstall).toHaveBeenCalledWith('/tmp/yarn-proj', 'yarn', {})
+    expect(mockRunInstall).toHaveBeenCalledWith('/tmp/pnpm-proj', 'pnpm', {})
+    expect(mockRunInstall).toHaveBeenCalledWith(longDir, 'npm', {})
     expect(mockRunInstall).toHaveBeenCalledTimes(3)
   })
 
@@ -134,6 +140,18 @@ describe('index.js (start)', () => {
     expect(mockFindPackageDirs).toHaveBeenCalled()
   })
 
+  it('passes clean option through to runInstall', async () => {
+    const { parseCliArgs } = require('../cli')
+    parseCliArgs.mockReturnValue({ clean: true })
+
+    mockFindPackageDirs.mockReturnValue(['/tmp/proj'])
+    mockRunInstall.mockResolvedValue({ success: true })
+
+    await loadAndRun()
+
+    expect(mockRunInstall).toHaveBeenCalledWith('/tmp/proj', 'npm', { clean: true })
+  })
+
   it('catches unexpected errors from start() and exits', async () => {
     mockFindPackageDirs.mockImplementation(() => { throw new Error('unexpected boom') })
 
@@ -141,5 +159,56 @@ describe('index.js (start)', () => {
 
     expect(console.error).toHaveBeenCalled()
     expect(mockExitCode).toBe(1)
+  })
+
+  it('prints version and exits when --version is passed', async () => {
+    const { parseCliArgs, printVersion } = require('../cli')
+    parseCliArgs.mockReturnValue({ version: true })
+
+    await loadAndRun()
+
+    expect(printVersion).toHaveBeenCalled()
+    expect(mockExitCode).toBe(0)
+    expect(mockRunInstall).not.toHaveBeenCalled()
+  })
+
+  it('prints help and exits when --help is passed', async () => {
+    const { parseCliArgs, printHelp } = require('../cli')
+    parseCliArgs.mockReturnValue({ help: true })
+
+    await loadAndRun()
+
+    expect(printHelp).toHaveBeenCalled()
+    expect(mockExitCode).toBe(0)
+    expect(mockRunInstall).not.toHaveBeenCalled()
+  })
+
+  it('prints error and help when parseCliArgs throws', async () => {
+    const { parseCliArgs, printHelp } = require('../cli')
+    parseCliArgs.mockImplementation(() => { throw new Error('Unknown option') })
+
+    // process.exit must throw to halt synchronous top-level code
+    process.exit.mockImplementation((code) => {
+      mockExitCode = code
+      throw new Error(`process.exit(${code})`)
+    })
+
+    try { require('../../index') } catch {}
+
+    expect(console.error).toHaveBeenCalled()
+    expect(printHelp).toHaveBeenCalled()
+    expect(mockExitCode).toBe(1)
+    expect(mockRunInstall).not.toHaveBeenCalled()
+  })
+
+  it('start() defaults options to empty object when called without arguments', async () => {
+    mockFindPackageDirs.mockReturnValue(['/tmp/proj'])
+    mockRunInstall.mockResolvedValue({ success: true })
+
+    await loadAndRun()
+    const { start } = require('../../index')
+    await start()
+
+    expect(mockRunInstall).toHaveBeenCalledWith('/tmp/proj', 'npm', {})
   })
 })
