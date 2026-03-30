@@ -1,18 +1,31 @@
 {
   "name": "install-all",
-  "version": "1.1.0",
-  "description": "Recursively npm install in all immediate folders containing package.json",
+  "version": "2.0.0",
+  "description": "Recursively install packages in all subdirectories with package.json files, using the appropriate package manager.",
+  "keywords": [
+    "install",
+    "packages",
+    "npm",
+    "yarn",
+    "pnpm",
+    "bun",
+    "recursive"
+  ],
   "main": "index.js",
-  "bin": {
-    "install-all": "index.js"
-  },
-  "author": "Ryan Mottley <ligerzero459@gmail.com>",
+  "bin": "index.js",
+  "author": "Ligerzero <ligerzero459@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "test": "jest --coverage"
+  },
   "dependencies": {
-    "async": "^2.0.1",
-    "chalk": "^4.0.0",
+    "async": "^3.2.6",
+    "chalk": "^4.1.2",
     "clui": "^0.3.6",
-    "figlet": "^1.3.0"
+    "figlet": "^1.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   },
   "repository": {
     "type": "git",
@@ -21,5 +34,6 @@
   "homepage": "https://github.com/ligerzero459/install-all",
   "bugs": {
     "url": "https://github.com/ligerzero459/install-all/issues"
-  }
+  },
+  "engines": { "node": ">=20"}
 }
